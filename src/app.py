@@ -33,8 +33,11 @@ def load_activities():
 def save_activities(activities):
     """Save activities to activities.json file"""
     activities_file = Path(__file__).parent / "activities.json"
-    with open(activities_file, 'w') as f:
-        json.dump(activities, f, indent=2)
+    lock_path = activities_file.with_suffix(".json.lock")
+    lock = FileLock(lock_path)
+    with lock:
+        with open(activities_file, 'w') as f:
+            json.dump(activities, f, indent=2)
 
 # Load activities at startup
 activities = load_activities()
